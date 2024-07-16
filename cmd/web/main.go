@@ -8,17 +8,20 @@ import (
 	"net/http"
 	"os"
 
+	"snippet-box.kensonjohnson.com/internal/models"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
-	logger *slog.Logger
+	logger   *slog.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
 	// Take in command line flags
 	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dsn", "user:password@tcp/snippetbox?parseTime=true", "MySQL data source name")
+	dsn := flag.String("dsn", "user:password@/snippetbox?parseTime=true", "MySQL data source name")
 	flag.Parse()
 
 	// Setup logging
@@ -35,7 +38,8 @@ func main() {
 
 	// Dependency injection
 	app := &application{
-		logger: logger,
+		logger:   logger,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	// Start webserver
