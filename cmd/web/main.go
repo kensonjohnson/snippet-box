@@ -1,19 +1,33 @@
 package main
 
 import (
-	"log"
+	"flag"
+	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
+type application struct {
+	logger *slog.Logger
+}
+
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /{$}", home)
-	mux.HandleFunc("GET /snippet/view/{id}", snippetView)
-	mux.HandleFunc("GET /snippet/create", snippetCreate)
-	mux.HandleFunc("POST /snippet/create", snippetCreatePost)
+	// Take in command line flags
+	addr := flag.String("addr", ":4000", "HTTP network address")
+	flag.Parse()
 
-	log.Print("starting server at http://localhost:4000")
+	// Setup logging
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	err := http.ListenAndServe(":4000", mux)
-	log.Fatal(err)
+	// Dependency injection
+	app := &application{
+		logger: logger,
+	}
+
+	// Start webserver
+	logger.Info(fmt.Sprintf("starting server at http://localhost%s", *addr))
+	err := http.ListenAndServe(*addr, app.routes())
+	logger.Error(err.Error())
+	os.Exit(1)
 }
