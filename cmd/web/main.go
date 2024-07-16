@@ -25,22 +25,9 @@ func main() {
 		logger: logger,
 	}
 
-	// Create servemux
-	mux := http.NewServeMux()
-
-	// Serve static files
-	fileServer := http.FileServer(http.Dir("./ui/static"))
-	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
-
-	// Define routes
-	mux.HandleFunc("GET /{$}", app.home)
-	mux.HandleFunc("GET /snippet/view/{id}", app.snippetView)
-	mux.HandleFunc("GET /snippet/create", app.snippetCreate)
-	mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
-
 	// Start webserver
 	logger.Info(fmt.Sprintf("starting server at http://localhost%s", *addr))
-	err := http.ListenAndServe(*addr, mux)
+	err := http.ListenAndServe(*addr, app.routes())
 	logger.Error(err.Error())
 	os.Exit(1)
 }
