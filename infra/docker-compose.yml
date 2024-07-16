@@ -8,7 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-      MYSQL_DB: snippetbox
+      MYSQL_DATABASE: snippetbox
     ports:
       - 3306:3306
 
