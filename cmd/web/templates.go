@@ -7,6 +7,12 @@ import (
 	"snippet-box.kensonjohnson.com/internal/models"
 )
 
+type templateData struct {
+	CurrentYear int
+	Snippet     models.Snippet
+	Snippets    []models.Snippet
+}
+
 func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
@@ -37,9 +43,4 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	}
 
 	return cache, nil
-}
-
-type templateData struct {
-	Snippet  models.Snippet
-	Snippets []models.Snippet
 }
