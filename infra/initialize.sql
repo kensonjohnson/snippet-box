@@ -18,3 +18,15 @@ CREATE TABLE IF NOT EXISTS sessions(
 
 CREATE INDEX sessions_expiry_idx ON sessions(expiry);
 
+-- Create a `users` table
+CREATE TABLE IF NOT EXISTS users(
+    id integer NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
+    hashed_password char(60) NOT NULL,
+    created DATETIME NOT NULL
+);
+
+ALTER TABLE users
+    ADD CONSTRAINT users_uc_email UNIQUE (email);
+
