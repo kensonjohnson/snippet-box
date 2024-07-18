@@ -2,7 +2,7 @@
 
 <!-- prettier-ignore -->
 {{define "main"}}
-<form action="/user/signup" method="POST" novalidate>
+<form action="/user/signup" method="POST">
   <div>
     <label>Name:</label>
     {{with .Form.FieldErrors.name}}
@@ -22,7 +22,7 @@
     {{with .Form.FieldErrors.password}}
     <label class="error">{{.}}</label>
     {{end}}
-    <input type="password" name="password" required />
+    <input type="password" name="password" minlength="8" required />
   </div>
   <div>
     <input type="submit" value="Signup" />
