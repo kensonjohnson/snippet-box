@@ -14,6 +14,10 @@ func (app *application) routes() http.Handler {
 	// Serve static files
 	mux.Handle("GET /static/", http.FileServerFS(ui.Files))
 
+	// Setup server ping
+	mux.HandleFunc("GET /ping", ping)
+
+	// Middleware handler
 	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf, app.authenticate)
 
 	// Define routes
@@ -24,12 +28,14 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /user/login", dynamic.ThenFunc(app.userLogin))
 	mux.Handle("POST /user/login", dynamic.ThenFunc(app.userLoginPost))
 
+	// Adding authentication middleware to the chain
 	protected := dynamic.Append(app.requireAuthentication)
 
 	mux.Handle("GET /snippet/create", protected.ThenFunc(app.snippetCreate))
 	mux.Handle("POST /snippet/create", protected.ThenFunc(app.snippetCreatePost))
 	mux.Handle("POST /user/logout", protected.ThenFunc(app.userLogoutPost))
 
+	// Middleware that should run on every request
 	standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
 
 	return standard.Then(mux)
